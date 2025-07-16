@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent { label 'agent-linux' }
     environment {
         port = "8080"
         container = "docker-with-jenkins"
@@ -14,7 +14,7 @@ pipeline {
         }
         stage("run") {
             steps {
-                sh "docker run -p ${port}:80 ${image}"
+                sh "docker run -d -p ${port}:80 ${image}" 
             }
         }
         stage("stop") {
