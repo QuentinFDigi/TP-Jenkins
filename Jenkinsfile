@@ -8,10 +8,8 @@ pipeline {
     stages { 
         stage("build") {
             steps {
-                script {
-                    sh "ls"
-                    sh "docker build -t ${image} ."
-                }
+                sh "ls"
+                sh "docker build -t ${image} ."
             }
         }
         stage("run") {
