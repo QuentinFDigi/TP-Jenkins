@@ -21,7 +21,7 @@ pipeline {
             steps {
                 script {
                     def result = sh(
-                        script: "docker ps -a --filter 'name="${container}"' --format '{{.Names}}'",
+                        script: "docker ps -a --filter 'name=${container}' --format '{{.Names}}'",
                         returnStdout: true
                     ).trim()
 
