@@ -8,7 +8,6 @@ pipeline {
     stages { 
         stage("build") {
             steps {
-                sh "docker run -p ${port}:80 ${container}"
                 sh "docker build . -t ${image}"
             }
         }
