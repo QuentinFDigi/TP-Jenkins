@@ -1,50 +1,53 @@
 pipeline {
     agent any
-    environment {
-        port = "8080"
-        container = "docker-with-jenkins"
-        image = "basic-site"
-    }
-    stages { 
-        stage("build") {
-            steps {
-                script {
-                    sh "docker build -t ${image} ."
-                }
-            }
-        }
-        stage("run") {
-            steps {
-                sh "docker run -p ${port}:80 ${image}"
-            }
-        }
-        stage("stop") {
-            steps {
-                script {
-                    def result = sh(
-                        script: "docker ps -a --filter 'name=${container}' --format '{{.Names}}'",
-                        returnStdout: true
-                    ).trim()
 
-                    if (result == ${container}) {
-                        sh "docker stop ${container}"
-                        sh "docker rm ${container}"
-                    }
+    environment {
+        CONTAINER_NAME = 'conteneur-nginx'
+        IMAGE_NAME = 'image-nginx'
+        PORT = '8080'
+    }
+
+    stages {
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    echo "Création image Docker: ${IMAGE_NAME}"
+                    sh "docker build -t ${IMAGE_NAME} ."
                 }
             }
         }
-        stage("deploy") {
+
+        stage('Stop & Remove Existing Container') {
             steps {
-                sh "docker run -d -p ${port}:80 --name ${container} ${image}"
+                script {
+                    sh """
+                        if [ \$(docker ps -q -f name=${CONTAINER_NAME}) ]; then
+                            docker stop ${CONTAINER_NAME}
+                        fi
+                        if [ \$(docker ps -a -q -f name=${CONTAINER_NAME}) ]; then
+                            docker rm ${CONTAINER_NAME}
+                        fi
+                    """
+                }
+            }
+        }
+
+        stage('Run Container') {
+            steps {
+                script {
+                    echo "Lancement conteneur ${CONTAINER_NAME} sur le port ${PORT}"
+                    sh "docker run -d -p ${PORT}:80 --name ${CONTAINER_NAME} ${IMAGE_NAME}"
+                }
             }
         }
     }
+
     post {
         success {
-            echo "Site deployé sur le port ${port}"
+            echo ":white_check_mark: Site déployé avec succès sur le port ${PORT}"
         }
         failure {
-            echo "Site non déployé"
+            echo ":x: Le déploiement a échoué."
         }
     }
 }
