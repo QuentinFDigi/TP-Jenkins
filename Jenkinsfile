@@ -12,11 +12,6 @@ pipeline {
                 sh "docker build -t ${image} ."
             }
         }
-        stage("run") {
-            steps {
-                sh "docker run -d -p ${port}:80 ${image}" 
-            }
-        }
         stage("stop") {
             steps {
                 script {
