@@ -20,15 +20,8 @@ pipeline {
         stage("stop") {
             steps {
                 script {
-                    def result = sh(
-                        script: "docker ps -a --filter 'name=${container}' --format '{{.Names}}'",
-                        returnStdout: true
-                    ).trim()
-
-                    if (result == ${container}) {
-                        sh "docker stop ${container}"
-                        sh "docker rm ${container}"
-                    }
+                    sh "docker stop ${container} || true"
+                    sh "docker rm ${container}  || true"
                 }
             }
         }
