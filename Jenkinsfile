@@ -8,13 +8,13 @@ pipeline {
     stages { 
         stage("build") {
             steps {
-                sh "docker run -p "${port}":80 "${container}""
+                sh "docker run -p ${port}:80 ${container}"
                 sh "docker build . -t ${image}"
             }
         }
         stage("run") {
             steps {
-                sh "docker run -p "${port}":80 "${image}""
+                sh "docker run -p ${port}:80 ${image}"
             }
         }
         stage("stop") {
@@ -25,22 +25,22 @@ pipeline {
                         returnStdout: true
                     ).trim()
 
-                    if (result == "${container}") {
-                        sh "docker stop "${container}""
-                        sh "docker rm "${container}""
+                    if (result == ${container}) {
+                        sh "docker stop ${container}"
+                        sh "docker rm ${container}"
                     }
                 }
             }
         }
         stage("deploy") {
             steps {
-                sh "docker run -d -p "${port}":80 --name "${container}" "${image}""
+                sh "docker run -d -p ${port}:80 --name ${container} ${image}"
             }
         }
     }
     post {
         success {
-            echo "Site deployé sur le port "${port}""
+            echo "Site deployé sur le port ${port}"
         }
         failure {
             echo "Site non déployé"
