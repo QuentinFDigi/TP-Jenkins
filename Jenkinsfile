@@ -1,6 +1,6 @@
 pipeline {
     agent any
-    envirnoment {
+    environment {
         port = "8080"
         container = "docker-with-jenkins"
         image = "basic-site"
