@@ -14,7 +14,7 @@ pipeline {
         }
         stage("run") {
             steps {
-                sh "docker run -p "${port}":80 "${image}"
+                sh "docker run -p "${port}":80 "${image}""
             }
         }
         stage("stop") {
