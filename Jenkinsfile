@@ -9,12 +9,12 @@ pipeline {
         stage("build") {
             steps {
                 sh "docker run -p ${port}:80 ${container}"
-                docker build . -t ${image}
+                sh "docker build . -t ${image}"
             }
         }
         stage("run") {
             steps {
-                docker run -p "${port}:80" "${image}
+                sh "docker run -p "${port}:80" "${image}"
             }
         }
         stage("stop") {
@@ -26,15 +26,15 @@ pipeline {
                     ).trim()
 
                     if (result == "${container}") {
-                        docker stop "${container}"
-                        docker rm "${container}"
+                        sh "docker stop "${container}""
+                        sh "docker rm "${container}""
                     }
                 }
             }
         }
         stage("deploy") {
             steps {
-                docker run -d -p "${port}":80 --name "${container}" "${image}"
+                sh "docker run -d -p "${port}":80 --name "${container}" "${image}""
             }
         }
     }
